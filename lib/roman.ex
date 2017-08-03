@@ -1,18 +1,8 @@
 defmodule Roman do
   @moduledoc """
-  Documentation for Roman.
+  Functions to work with roman numerals
   """
 
-  @doc """
-  Hello world.
-
-  ## Examples
-
-      iex> Roman.hello
-      :world
-
-  """
-  def hello do
-    :world
-  end
+  @type error :: {atom, atom, String.t}
+  @type numeral :: String.t
 end
