@@ -55,7 +55,7 @@ defmodule Roman do
       {:error, :repeated_vld,
       "letters V, L, and D can appear only once, but found several instances of L, V"}
   """
-  @spec decode(String.t) :: number | Roman.error
+  @spec decode(String.t) :: {:ok, number} | Roman.error
   defdelegate decode(numeral), to: __MODULE__.Decoder
 
   @doc """
