@@ -57,4 +57,20 @@ defmodule Roman do
   """
   @spec decode(String.t) :: number | Roman.error
   defdelegate decode(numeral), to: __MODULE__.Decoder
+
+  @doc """
+  Returns a boolean indicating whether the provided string is a valid numeral.
+
+  iex> Roman.numeral?("VI")
+  true
+  iex> Roman.numeral?("FOO")
+  false
+  """
+  @spec numeral?(String.t) :: boolean
+  def numeral?(string) do
+    case decode(string) do
+      {:ok, _} -> true
+      _ -> false
+    end
+  end
 end
