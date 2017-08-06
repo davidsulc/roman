@@ -59,6 +59,22 @@ defmodule Roman do
   defdelegate decode(numeral), to: __MODULE__.Decoder
 
   @doc """
+  Similar to `decode/1` but raises an error if the numeral could not be
+  decoded.
+
+  If it succeeds decoding the numeral, it returns corresponding value.
+  """
+  @spec decode!(String.t) :: number | no_return
+  def decode!(numeral) do
+    case decode(numeral) do
+      {:ok, val} ->
+        val
+      {:error, _, message} ->
+        raise ArgumentError, message: message
+    end
+  end
+
+  @doc """
   Returns a boolean indicating whether the provided string is a valid numeral.
 
   iex> Roman.numeral?("VI")

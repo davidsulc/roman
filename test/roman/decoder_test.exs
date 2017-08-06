@@ -40,4 +40,12 @@ defmodule Roman.DecoderTest do
           "Expected decode(\"#{num}\") to yield #{expected}, but got #{result}"
     end
   end
+
+  describe "decode!/1" do
+    test "raises ArgumentError on invalid input" do
+      assert_raise ArgumentError, fn ->
+        Roman.decode!("VV")
+      end
+    end
+  end
 end
