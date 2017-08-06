@@ -26,6 +26,14 @@ defmodule Roman do
   @doc """
   Decodes a roman numeral string into the corresponding integer value.
 
+  Strings with non-uppercase letters will only be decoded if the `:ignore_case`
+  option is set to `true`.
+
+  ## Options
+    * `:ignore_case` (boolean) - if `true`, strings will be decoded regardless
+      of casing. If `false` (default), strings containing a lowercase letter
+      will return an error.
+
   This function returns:
 
   - `{:ok, value}` - the integer value of the provided numeral.
@@ -51,12 +59,14 @@ defmodule Roman do
 
       iex> Roman.decode("MMMDCCCXCVIII")
       {:ok, 3898}
+      iex> Roman.decode("vi", ignore_case: true)
+      {:ok, 6}
       iex> Roman.decode("LLVIV")
       {:error, :repeated_vld,
       "letters V, L, and D can appear only once, but found several instances of L, V"}
   """
-  @spec decode(String.t) :: {:ok, number} | Roman.error
-  defdelegate decode(numeral), to: __MODULE__.Decoder
+  @spec decode(String.t, keyword) :: {:ok, number} | Roman.error
+  defdelegate decode(numeral, options \\ []), to: __MODULE__.Decoder
 
   @doc """
   Similar to `decode/1` but raises an error if the numeral could not be
@@ -64,9 +74,9 @@ defmodule Roman do
 
   If it succeeds decoding the numeral, it returns corresponding value.
   """
-  @spec decode!(String.t) :: number | no_return
-  def decode!(numeral) do
-    case decode(numeral) do
+  @spec decode!(String.t, keyword) :: number | no_return
+  def decode!(numeral, options \\ []) do
+    case decode(numeral, options) do
       {:ok, val} ->
         val
       {:error, _, message} ->

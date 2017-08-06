@@ -4,6 +4,21 @@ defmodule Roman.Decoder do
   @type decoded_numeral :: {Roman.numeral, map}
   @type decoded_numeral_sequence :: [decoded_numeral]
 
+  @spec decode(String.t, keyword) :: number | Roman.error
+  def decode(numeral, options) do
+    maybe_upcase = fn numeral ->
+      if options[:ignore_case] == true do
+        String.upcase(numeral)
+      else
+        numeral
+      end
+    end
+
+    numeral
+    |> maybe_upcase.()
+    |> decode
+  end
+
   @spec decode(String.t) :: number | Roman.error
   def decode(""),
     do: {:error, :empty_string, "expected a numeral, got an empty string"}
