@@ -57,7 +57,7 @@ defmodule Roman.Validators.Sequence do
   end
 
   @spec check_subtraction_bound(sequence,
-      nil | {number, Roman.numeral}) :: :ok | Roman.error
+      nil | {integer, Roman.numeral}) :: :ok | Roman.error
   defp check_subtraction_bound([], _), do: :ok
 
   defp check_subtraction_bound([{num, %{delta: d}} | t], nil) do

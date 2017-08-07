@@ -20,7 +20,7 @@ defmodule Roman do
   Returns a list of `{int_value, numeral_string}` tuples for all possible
   numerals.
   """
-  @spec numeral_pairs() :: [{number, numeral}]
+  @spec numeral_pairs() :: [{integer, numeral}]
   def numeral_pairs, do: @numeral_pairs
 
   @doc """
@@ -65,7 +65,7 @@ defmodule Roman do
       {:error, :repeated_vld,
       "letters V, L, and D can appear only once, but found several instances of L, V"}
   """
-  @spec decode(String.t, keyword) :: {:ok, number} | Roman.error
+  @spec decode(String.t, keyword) :: {:ok, integer} | Roman.error
   defdelegate decode(numeral, options \\ []), to: __MODULE__.Decoder
 
   @doc """
@@ -74,7 +74,7 @@ defmodule Roman do
 
   If it succeeds in decoding the numeral, it returns corresponding value.
   """
-  @spec decode!(String.t, keyword) :: number | no_return
+  @spec decode!(String.t, keyword) :: integer | no_return
   def decode!(numeral, options \\ []) do
     case decode(numeral, options) do
       {:ok, val} ->

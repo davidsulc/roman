@@ -5,7 +5,7 @@ defmodule Test.Support.Converter do
   @spec all_numerals() :: [Roman.numeral]
   def all_numerals, do: unquote(numerals)
 
-  @spec convert(Roman.numeral | number) :: Roman.numeral | number
+  @spec convert(Roman.numeral | integer) :: Roman.numeral | integer
   for {val, num} <- Roman.numeral_pairs do
     def convert(unquote(num)), do: unquote(val)
     def convert(unquote(val)), do: unquote(num)

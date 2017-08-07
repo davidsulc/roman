@@ -47,7 +47,7 @@ defmodule Roman.Decoder do
       {:error, :repeated_vld,
       "letters V, L, and D can appear only once, but found several instances of L, V"}
   """
-  @spec decode(String.t, keyword) :: {:ok, number} | Roman.error
+  @spec decode(String.t, keyword) :: {:ok, integer} | Roman.error
   def decode(numeral, options) do
     maybe_upcase = fn numeral ->
       if options[:ignore_case] == true do
@@ -62,7 +62,7 @@ defmodule Roman.Decoder do
     |> decode
   end
 
-  @spec decode(String.t) :: {:ok, number} | Roman.error
+  @spec decode(String.t) :: {:ok, integer} | Roman.error
   def decode(""),
     do: {:error, :empty_string, "expected a numeral, got an empty string"}
 
