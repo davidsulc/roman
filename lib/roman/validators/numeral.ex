@@ -22,21 +22,6 @@ defmodule Roman.Validators.Numeral do
     end
   end
 
-  @doc """
-  Validates the numeral contains only valid letters.
-
-  Returns the given roman numeral, or `{:error, :invalid_letter, message}` on
-  validation failure.
-
-  ### Example
-
-  iex> only_valid_numerals("MDCLXVI")
-  {:ok, "MDCLXVI"}
-  iex> only_valid_numerals("SIXT")
-  {:error, :invalid_letter,
-  "numeral contains invalid letter(s), valid letters are M, D, C, L, X, V, I "
-  <> "but encountered S, T"}
-  """
   @spec only_valid_numerals(Roman.numeral) :: ok_numeral_or_error
   defp only_valid_numerals(numeral) do
     numeral
@@ -55,20 +40,6 @@ defmodule Roman.Validators.Numeral do
   @spec to_letters(Roman.numeral) :: [Roman.numeral]
   defp to_letters(numeral), do: String.split(numeral, "", trim: true)
 
-  @doc """
-  Validates that numbers beginning with a '5' (V, L and D) only appear once.
-
-  Returns the given roman numeral, or `{:error, :repeated_vld, message}` on
-  validation failure.
-
-  ### Example
-
-  iex> only_one_v_l_d("XVI")
-  {:ok, "XVI"}
-  iex> only_one_v_l_d("LLVIV")
-  {:error, :repeated_vld, "letters V, L, and D can appear only once, but found "
-  <> "several instances of L, V"}
-  """
   @spec only_one_v_l_d(Roman.numeral) :: ok_numeral_or_error
   defp only_one_v_l_d(numeral) do
     numeral
@@ -98,21 +69,6 @@ defmodule Roman.Validators.Numeral do
 
   defp update_letter_count(_, acc), do: acc
 
-  @doc """
-  Validates that letters within the numeral repeat at most 3 times.
-
-  Returns the given roman numeral, or
-  `{:error, :identical_letter_seq_too_long, message}` on validation failure.
-
-  ### Example
-
-  iex> max_3_consecutive_repetitions("XIII")
-  {:ok, "XIII"}
-  iex> max_3_consecutive_repetitions("CCCCXIIII")
-  {:error, :identical_letter_seq_too_long,
-      "a given letter cannot appear more than 3 times in a row: "
-      <> "encountered invalid sequences for C, I"}
-  """
   @spec max_3_consecutive_repetitions(Roman.numeral) :: ok_numeral_or_error
   defp max_3_consecutive_repetitions(numeral) do
     numeral

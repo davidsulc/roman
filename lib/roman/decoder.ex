@@ -4,7 +4,6 @@ defmodule Roman.Decoder do
   alias Roman.Validators.{Numeral, Sequence}
 
   @type decoded_numeral :: {Roman.numeral, map}
-  @type decoded_numeral_sequence :: [decoded_numeral]
 
   @doc """
   Decodes a roman numeral string into the corresponding integer value.
@@ -48,7 +47,7 @@ defmodule Roman.Decoder do
       {:error, :repeated_vld,
       "letters V, L, and D can appear only once, but found several instances of L, V"}
   """
-  @spec decode(String.t, keyword) :: number | Roman.error
+  @spec decode(String.t, keyword) :: {:ok, number} | Roman.error
   def decode(numeral, options) do
     maybe_upcase = fn numeral ->
       if options[:ignore_case] == true do
@@ -63,7 +62,7 @@ defmodule Roman.Decoder do
     |> decode
   end
 
-  @spec decode(String.t) :: number | Roman.error
+  @spec decode(String.t) :: {:ok, number} | Roman.error
   def decode(""),
     do: {:error, :empty_string, "expected a numeral, got an empty string"}
 
@@ -85,7 +84,7 @@ defmodule Roman.Decoder do
     end
   end
 
-  @spec decode_sections(Roman.numeral) :: decoded_numeral_sequence | Roman.error
+  @spec decode_sections(Roman.numeral) :: {:ok, [decoded_numeral]} | Roman.error
   defp decode_sections(numeral) do
     sequence =
       numeral
