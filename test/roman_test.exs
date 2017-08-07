@@ -57,5 +57,7 @@ defmodule RomanTest do
   test "numeral?/1" do
     assert Roman.numeral?("XVI") == true
     assert Roman.numeral?("FOO") == false
+    assert Roman.numeral?("x") == false
+    assert Roman.numeral?("x", ignore_case: true) == true
   end
 end

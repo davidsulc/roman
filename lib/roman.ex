@@ -87,14 +87,23 @@ defmodule Roman do
   @doc """
   Returns a boolean indicating whether the provided string is a valid numeral.
 
+  ## Options
+    * `:ignore_case` (boolean) - if `true`, strings will be evaluated while
+      ignoring casing. If `false` (default), strings containing a lowercase
+      letter will return `false`.
+
   iex> Roman.numeral?("VI")
   true
   iex> Roman.numeral?("FOO")
   false
+  iex> Roman.numeral?("x")
+  false
+  iex> Roman.numeral?("x", ignore_case: true)
+  true
   """
-  @spec numeral?(String.t) :: boolean
-  def numeral?(string) do
-    case decode(string) do
+  @spec numeral?(String.t, keyword) :: boolean
+  def numeral?(string, options \\ []) do
+    case decode(string, options) do
       {:ok, _} -> true
       _ -> false
     end
