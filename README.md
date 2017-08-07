@@ -1,10 +1,11 @@
 # Roman
 
-**TODO: Add description**
+A production-ready encoder/decoder for roman numerals, with detailed validation.
 
 ## Installation
 
-If [available in Hex](https://hex.pm/docs/publish), the package can be installed
+If [available in Hex](https://hex.pm/docs/publish) (**NOT YET THE CASE!**),
+the package can be installed
 by adding `roman` to your list of dependencies in `mix.exs`:
 
 ```elixir
@@ -17,3 +18,35 @@ Documentation can be generated with [ExDoc](https://github.com/elixir-lang/ex_do
 and published on [HexDocs](https://hexdocs.pm). Once published, the docs can
 be found at [https://hexdocs.pm/roman](https://hexdocs.pm/roman).
 
+## Basic Usage
+
+```elixir
+iex>Roman.numeral?("III")
+true
+
+iex> Roman.decode("MMMDCCCXCVIII")
+{:ok, 3898}
+iex> Roman.decode("ix", ignore_case: true)
+{:ok, 9}
+iex> Roman.decode!("XVI")
+16
+iex> Roman.decode("CMC")
+{:error, :value_greater_than_subtraction, "once a value has been subtracted from
+  another, no further numeral or pair may match or exceed the subtracted value,
+  but encountered C (100) after having previously subtracted 100 (in CM)"}
+
+iex> Roman.encode(16)
+{:ok, "XVI"}
+iex> Roman.encode!(16)
+"XVI"
+```
+
+## Author
+
+David Sulc
+
+
+## License
+
+Roman is released under the MIT License. See the LICENSE file for further
+details.
