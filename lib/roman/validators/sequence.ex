@@ -12,9 +12,12 @@ defmodule Roman.Validators.Sequence do
   @spec validate(Roman.decoded_numeral_sequence) ::
       Roman.decoded_numeral_sequence | Roman.error
   def validate(seq) do
-    seq
-    |> increasing_value_order
-    |> subtraction_bounds_following_values
+    with  {:ok, seq} <- increasing_value_order(seq),
+          {:ok, seq} <- subtraction_bounds_following_values(seq) do
+      {:ok, seq}
+    else
+      {:error, _, _} = error -> error
+    end
   end
 
   @doc """
@@ -26,18 +29,17 @@ defmodule Roman.Validators.Sequence do
   ### Example
 
   iex> increasing_value_order([{"X", %{value: 10}}, {"I", %{value: 1}}])
-  [{"X", %{value: 10}}, {"I", %{value: 1}}]
+  {:ok, [{"X", %{value: 10}}, {"I", %{value: 1}}]}
   iex> increasing_value_order([{"V", %{value: 5}}, {"X", %{value: 10}}])
   {:error, :sequence_increasing,
    "larger numerals must be placed to the left of smaller numerals, "
    <> "but encountered V (5) before X (10)"}
   """
   @spec increasing_value_order(Roman.decoded_numeral_sequence) ::
-      Roman.decoded_numeral_sequence | Roman.error
-  def increasing_value_order({:error, _, _} = error), do: error
-  def increasing_value_order(seq) when is_list(seq) do
+      {:ok, Roman.decoded_numeral_sequence} | Roman.error
+  defp increasing_value_order(seq) when is_list(seq) do
     case check_increasing_value_order(seq) do
-      :ok -> seq
+      :ok -> {:ok, seq}
       {:error, _, _} = error -> error
     end
   end
@@ -75,7 +77,7 @@ defmodule Roman.Validators.Sequence do
 
   iex> subtraction_bounds_following_values([{"XC", %{value: 90, delta: 10}},
   ...>   {"IX", %{value: 9, delta: 1}}])
-  [{"XC", %{value: 90, delta: 10}}, {"IX", %{value: 9, delta: 1}}]
+  {:ok, [{"XC", %{value: 90, delta: 10}}, {"IX", %{value: 9, delta: 1}}]}
   iex> subtraction_bounds_following_values([{"CM", %{value: 900, delta: 100}},
   ...>   {"C", %{value: 100}}])
   {:error, :value_greater_than_subtraction,
@@ -84,11 +86,10 @@ defmodule Roman.Validators.Sequence do
    <> "having previously subtracted 100 (in CM)"}
   """
   @spec subtraction_bounds_following_values(Roman.decoded_numeral_sequence)
-      :: Roman.decoded_numeral_sequence | Roman.error
-  def subtraction_bounds_following_values({:error, _, _} = error), do: error
-  def subtraction_bounds_following_values(seq) do
+      :: {:ok, Roman.decoded_numeral_sequence} | Roman.error
+  defp subtraction_bounds_following_values(seq) do
     case check_subtraction_bound(seq, nil) do
-      :ok -> seq
+      :ok -> {:ok, seq}
       {:error, _, _} = error -> error
     end
   end

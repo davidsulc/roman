@@ -32,37 +32,24 @@ defmodule Roman.Decoder do
   # The below implementation will return a detailed error message indicating
   # why a numeral couldn't be parsed.
   def decode(numeral) when is_binary(numeral) do
-    numeral
-    |> Roman.Validators.Numeral.validate
-    |> decode_sections
-    |> validate_section_sequence
-    |> compute_result
-    |> case do
+    with  {:ok, numeral} <- Roman.Validators.Numeral.validate(numeral),
+          {:ok, seq} <- decode_sections(numeral),
+          {:ok, seq} <- Roman.Validators.Sequence.validate(seq) do
+      Enum.reduce(seq, 0, fn {_, %{value: v}}, acc -> v + acc end)
+    else
       {:error, _, _} = error -> error
-      value -> {:ok, value}
     end
   end
 
-  @spec decode_sections(Roman.numeral | Roman.error)
-      :: decoded_numeral_sequence | Roman.error
-  defp decode_sections({:error, _, _} = error), do: error
+  @spec decode_sections(Roman.numeral) :: decoded_numeral_sequence | Roman.error
   defp decode_sections(numeral) do
-    numeral
-    |> Stream.unfold(&decode_section/1)
-    |> Enum.to_list
+    sequence =
+      numeral
+      |> Stream.unfold(&decode_section/1)
+      |> Enum.to_list
+
+    {:ok, sequence}
   end
-
-  @spec validate_section_sequence(decoded_numeral_sequence | Roman.error)
-      :: number | Roman.error
-  defp validate_section_sequence({:error, _, _} = error), do: error
-  defp validate_section_sequence(seq),
-    do: Roman.Validators.Sequence.validate(seq)
-
-  @spec compute_result(decoded_numeral_sequence | Roman.error)
-      :: number | Roman.error
-  defp compute_result({:error, _, _} = error), do: error
-  defp compute_result(seq),
-    do: Enum.reduce(seq, 0, fn {_, %{value: v}}, acc -> v + acc end)
 
   # When decoding, we need to keep track of whether we've already encountered a
   # subtractive combination, and how much the subtraction was: this will be

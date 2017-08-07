@@ -1,7 +1,9 @@
 defmodule Roman.Validators.Numeral do
   @moduledoc false
 
-  @type numeral_or_error :: Roman.numeral | Roman.error
+  @valid_numerals ~w(M D C L X V I)
+
+  @type ok_numeral_or_error :: {:ok, Roman.numeral} | Roman.error
 
   @doc """
   Validates the numeral.
@@ -11,10 +13,13 @@ defmodule Roman.Validators.Numeral do
   """
   @spec validate(Roman.numeral) :: Roman.numeral | Roman.error
   def validate(numeral) when is_binary(numeral) do
-    numeral
-    |> only_valid_numerals
-    |> max_3_consecutive_repetitions
-    |> only_one_v_l_d
+    with  {:ok, numeral} <- only_valid_numerals(numeral),
+          {:ok, numeral} <- max_3_consecutive_repetitions(numeral),
+          {:ok, numeral} <- only_one_v_l_d(numeral) do
+      {:ok, numeral}
+    else
+      {:error, _, _} = error -> error
+    end
   end
 
   @doc """
@@ -26,22 +31,21 @@ defmodule Roman.Validators.Numeral do
   ### Example
 
   iex> only_valid_numerals("MDCLXVI")
-  "MDCLXVI"
+  {:ok, "MDCLXVI"}
   iex> only_valid_numerals("SIXT")
   {:error, :invalid_letter,
   "numeral contains invalid letter(s), valid letters are M, D, C, L, X, V, I "
   <> "but encountered S, T"}
   """
-  @spec only_valid_numerals(numeral_or_error) :: numeral_or_error
-  def only_valid_numerals({:error, _, _} = error), do: error
-  def only_valid_numerals(numeral) do
+  @spec only_valid_numerals(Roman.numeral) :: ok_numeral_or_error
+  defp only_valid_numerals(numeral) do
     numeral
     |> to_letters
-    |> Enum.reject(&Enum.member?(valid_numerals(), &1))
+    |> Enum.reject(&Enum.member?(@valid_numerals, &1))
     |> case do
-      [] -> numeral
+      [] -> {:ok, numeral}
       invalid_letters ->
-        pretty_numerals = Enum.join(valid_numerals(), ", ")
+        pretty_numerals = Enum.join(@valid_numerals, ", ")
         {:error, :invalid_letter, "numeral contains invalid letter(s), "
             <> "valid letters are #{pretty_numerals} but encountered "
             <> Enum.join(invalid_letters, ", ")}
@@ -50,8 +54,6 @@ defmodule Roman.Validators.Numeral do
 
   @spec to_letters(Roman.numeral) :: [Roman.numeral]
   defp to_letters(numeral), do: String.split(numeral, "", trim: true)
-
-  def valid_numerals, do: ~w(M D C L X V I)
 
   @doc """
   Validates that numbers beginning with a '5' (V, L and D) only appear once.
@@ -62,14 +64,13 @@ defmodule Roman.Validators.Numeral do
   ### Example
 
   iex> only_one_v_l_d("XVI")
-  "XVI"
+  {:ok, "XVI"}
   iex> only_one_v_l_d("LLVIV")
   {:error, :repeated_vld, "letters V, L, and D can appear only once, but found "
   <> "several instances of L, V"}
   """
-  @spec only_one_v_l_d(numeral_or_error) :: numeral_or_error
-  def only_one_v_l_d({:error, _, _} = error), do: error
-  def only_one_v_l_d(numeral) when is_binary(numeral) do
+  @spec only_one_v_l_d(Roman.numeral) :: ok_numeral_or_error
+  defp only_one_v_l_d(numeral) do
     numeral
     |> to_letters
     |> Enum.reduce(%{}, &update_letter_count/2)
@@ -77,7 +78,7 @@ defmodule Roman.Validators.Numeral do
     |> Stream.map(fn {k, _} -> k end)
     |> Enum.to_list
     |> case do
-      [] -> numeral
+      [] -> {:ok, numeral}
       keys ->
         {:error, :repeated_vld,
             "letters V, L, and D can appear only once, "
@@ -106,15 +107,14 @@ defmodule Roman.Validators.Numeral do
   ### Example
 
   iex> max_3_consecutive_repetitions("XIII")
-  "XIII"
+  {:ok, "XIII"}
   iex> max_3_consecutive_repetitions("CCCCXIIII")
   {:error, :identical_letter_seq_too_long,
       "a given letter cannot appear more than 3 times in a row: "
       <> "encountered invalid sequences for C, I"}
   """
-  @spec max_3_consecutive_repetitions(numeral_or_error) :: numeral_or_error
-  def max_3_consecutive_repetitions({:error, _, _} = error), do: error
-  def max_3_consecutive_repetitions(numeral) do
+  @spec max_3_consecutive_repetitions(Roman.numeral) :: ok_numeral_or_error
+  defp max_3_consecutive_repetitions(numeral) do
     numeral
     |> to_letters
     |> Stream.unfold(fn
@@ -127,7 +127,7 @@ defmodule Roman.Validators.Numeral do
     |> Stream.map(fn {l, _} -> l end)
     |> Enum.to_list
     |> case do
-      [] -> numeral
+      [] -> {:ok, numeral}
       letters ->
         {:error, :identical_letter_seq_too_long,
             "a given letter cannot appear more than 3 times in a row: "
