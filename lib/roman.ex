@@ -72,13 +72,50 @@ defmodule Roman do
   Similar to `decode/1` but raises an error if the numeral could not be
   decoded.
 
-  If it succeeds decoding the numeral, it returns corresponding value.
+  If it succeeds in decoding the numeral, it returns corresponding value.
   """
   @spec decode!(String.t, keyword) :: number | no_return
   def decode!(numeral, options \\ []) do
     case decode(numeral, options) do
       {:ok, val} ->
         val
+      {:error, _, message} ->
+        raise ArgumentError, message: message
+    end
+  end
+
+  @doc """
+  Encodes an integer into a roman numeral.
+
+  Only values in the 1..3999 range can be encoded.
+
+  This function returns:
+
+  - `{:ok, numeral}` - the nuermal corresponding to the provided integer.
+  - `{:error, :invalid_integer, message}` - the provided integer is not within
+      the acceptable 1..3999 range.
+
+  ### Examples
+
+      iex> Roman.encode(3898)
+      {:ok, "MMMDCCCXCVIII"}
+      iex> Roman.encode(4000)
+      {:error, :invalid_integer, "cannot encode values outside of range 1..3999"}
+  """
+  @spec encode(integer) :: {:ok, Roman.numeral} | Roman.error
+  defdelegate encode(integer), to: __MODULE__.Encoder
+
+  @doc """
+  Similar to `encode/1` but raises an error if the integer could not be
+  encoded.
+
+  If it succeeds in encoding the numeral, it returns corresponding numeral.
+  """
+  @spec encode!(integer) :: Roman.numeral | no_return
+  def encode!(int) do
+    case encode(int) do
+      {:ok, numeral} ->
+        numeral
       {:error, _, message} ->
         raise ArgumentError, message: message
     end

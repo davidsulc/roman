@@ -4,6 +4,48 @@ defmodule Roman.Decoder do
   @type decoded_numeral :: {Roman.numeral, map}
   @type decoded_numeral_sequence :: [decoded_numeral]
 
+  @doc """
+  Decodes a roman numeral string into the corresponding integer value.
+
+  Strings with non-uppercase letters will only be decoded if the `:ignore_case`
+  option is set to `true`.
+
+  ## Options
+    * `:ignore_case` (boolean) - if `true`, strings will be decoded regardless
+      of casing. If `false` (default), strings containing a lowercase letter
+      will return an error.
+
+  This function returns:
+
+  - `{:ok, value}` - the integer value of the provided numeral.
+  - `{:error, reason, message}` - the provided numeral is invalid.
+
+  Possible errors are:
+
+  - `{:error, :empty_string, _}`: string is empty
+  - `{:error, :invalid_letter, _}`: if the provided string contains a character
+      that isn't one of I, V, X, L, C, D, M
+  - `{:error, :repeated_vld, _}`: string contains more than one instance each
+      of letters V, L, and D (i.e. numerals corresponding to numbers starting
+      with a 5)
+  - `{:error, :identical_letter_seq_too_long, _}`: string has a sequence of 4
+      or more identical letters
+  - `{:error, :sequence_increasing, _}`: string contains a value greater than
+      one appearing before it (rule applies to combined value in subtractive
+      case)
+  - `{:error, :value_greater_than_subtraction, _}`: string contains a value
+      matching or exceding a previously subtracted value
+
+  ### Examples
+
+      iex> decode("MMMDCCCXCVIII")
+      {:ok, 3898}
+      iex> decode("vi", ignore_case: true)
+      {:ok, 6}
+      iex> decode("LLVIV")
+      {:error, :repeated_vld,
+      "letters V, L, and D can appear only once, but found several instances of L, V"}
+  """
   @spec decode(String.t, keyword) :: number | Roman.error
   def decode(numeral, options) do
     maybe_upcase = fn numeral ->

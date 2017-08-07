@@ -49,9 +49,7 @@ defmodule RomanTest do
   end
 
   test "decode!/1 raises ArgumentError on invalid input" do
-    assert_raise ArgumentError, fn ->
-      Roman.decode!("VV")
-    end
+    assert_raise ArgumentError, fn -> Roman.decode!("VV") end
   end
 
   test "numeral?/1" do
@@ -65,5 +63,20 @@ defmodule RomanTest do
     values = Enum.map(Roman.numeral_pairs, fn {val, _} -> val end)
     assert values == Enum.to_list(1..3999)
     assert [{1, "I"}, {2, "II"} | _] = Roman.numeral_pairs
+  end
+
+  describe "encode/1" do
+    test "all valid numerals" do
+      for int <- 1..3999 do
+        expected = Converter.convert(int)
+        {:ok, result} = Roman.encode(int)
+        assert result == expected,
+            "Expected encode(\"#{int}\") to yield #{expected}, but got #{result}"
+      end
+    end
+  end
+
+  test "encode!/1 raises ArgumentError on invalid input" do
+    assert_raise ArgumentError, fn -> Roman.encode!(-1) end
   end
 end
