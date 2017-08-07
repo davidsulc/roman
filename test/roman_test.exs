@@ -60,4 +60,10 @@ defmodule RomanTest do
     assert Roman.numeral?("x") == false
     assert Roman.numeral?("x", ignore_case: true) == true
   end
+
+  test "numeral_pairs/1" do
+    values = Enum.map(Roman.numeral_pairs, fn {val, _} -> val end)
+    assert values == Enum.to_list(1..3999)
+    assert [{1, "I"}, {2, "II"} | _] = Roman.numeral_pairs
+  end
 end
