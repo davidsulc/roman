@@ -1,6 +1,8 @@
 defmodule Roman.Decoder do
   @moduledoc false
 
+  alias Roman.Validators.{Numeral, Sequence}
+
   @type decoded_numeral :: {Roman.numeral, map}
   @type decoded_numeral_sequence :: [decoded_numeral]
 
@@ -74,9 +76,9 @@ defmodule Roman.Decoder do
   # The below implementation will return a detailed error message indicating
   # why a numeral couldn't be parsed.
   def decode(numeral) when is_binary(numeral) do
-    with  {:ok, numeral} <- Roman.Validators.Numeral.validate(numeral),
+    with  {:ok, numeral} <- Numeral.validate(numeral),
           {:ok, seq} <- decode_sections(numeral),
-          {:ok, seq} <- Roman.Validators.Sequence.validate(seq) do
+          {:ok, seq} <- Sequence.validate(seq) do
       Enum.reduce(seq, 0, fn {_, %{value: v}}, acc -> v + acc end)
     else
       {:error, _, _} = error -> error
