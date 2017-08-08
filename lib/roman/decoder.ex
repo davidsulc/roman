@@ -3,6 +3,8 @@ defmodule Roman.Decoder do
 
   alias Roman.Validators.{Numeral, Sequence}
 
+  @valid_options [:ignore_case, :strict]
+
   @type decoded_numeral :: {Roman.numeral, map}
 
   @doc """
@@ -47,38 +49,49 @@ defmodule Roman.Decoder do
       {:error, :repeated_vld,
       "letters V, L, and D can appear only once, but found several instances of L, V"}
   """
-  @spec decode(String.t, keyword) :: {:ok, integer} | Roman.error
-  def decode(numeral, options) do
-    maybe_upcase = fn numeral ->
-      if options[:ignore_case] == true do
-        String.upcase(numeral)
-      else
-        numeral
-      end
+  @spec decode(String.t, keyword | map) :: {:ok, integer} | Roman.error
+  def decode(numeral, options \\ [])
+
+  def decode(numeral, options) when is_binary(numeral) and is_list(options) do
+    flags =
+      options
+      |> Keyword.take(@valid_options)
+      |> Enum.into(%{strict: true})
+
+    maybe_upcase = fn
+      numeral, %{ignore_case: true} -> String.upcase(numeral)
+      numeral, _                    -> numeral
     end
 
     numeral
-    |> maybe_upcase.()
-    |> decode
+    |> maybe_upcase.(flags)
+    |> decode(flags)
   end
 
-  @spec decode(String.t) :: {:ok, integer} | Roman.error
-  def decode(""),
+  def decode("", _),
     do: {:error, :empty_string, "expected a numeral, got an empty string"}
 
   for {val, num} <- Roman.numeral_pairs do
-    def decode(unquote(num)), do: {:ok, unquote(val)}
+    def decode(unquote(num), _), do: {:ok, unquote(val)}
   end
 
-  # The below code is fully capable of decoding numeral values on its own:
-  # the above function head matches were added for better performance.
-  # The below implementation will return a detailed error message indicating
-  # why a numeral couldn't be parsed.
-  def decode(numeral) when is_binary(numeral) do
-    with  {:ok, numeral} <- Numeral.validate(numeral),
-          {:ok, seq} <- decode_sections(numeral),
-          {:ok, seq} <- Sequence.validate(seq) do
-      Enum.reduce(seq, 0, fn {_, %{value: v}}, acc -> v + acc end)
+  # complete numeral decoder to handle "alternative forms"
+  # see e.g. https://en.wikipedia.org/wiki/Roman_numerals#Alternative_forms
+  def decode(numeral, opts) when is_binary(numeral) and is_map(opts) do
+    case get_sequence(numeral, opts) do
+      {:error, _, _} = error ->
+        error
+      {:ok, seq} ->
+        {:ok, Enum.reduce(seq, 0, fn {_, %{value: v}}, acc -> v + acc end)}
+    end
+  end
+
+  @spec get_sequence(Roman.numeral, map)
+      :: {:ok, [decoded_numeral]} | Roman.error
+  defp get_sequence(numeral, %{strict: strict}) do
+    with  {:ok, numeral} <- Numeral.validate(numeral, strict: strict),
+          {:ok, seq} <- decode_sections(numeral) do
+      if strict, do: Sequence.validate(seq), else: {:ok, seq}
     else
       {:error, _, _} = error -> error
     end

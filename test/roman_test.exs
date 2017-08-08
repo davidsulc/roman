@@ -46,6 +46,20 @@ defmodule RomanTest do
       assert {:error, _, _} = Roman.decode("x")
       assert Roman.decode("x", ignore_case: true) == {:ok, 10}
     end
+
+    test ":strict option" do
+      assert {:error, _, _} = Roman.decode("IIII")
+      assert {:error, _, _} = Roman.decode("A", strict: false)
+      # example of alternative numerals taken from
+      # https://en.wikipedia.org/wiki/Roman_numerals#Alternative_forms
+      # Note that alternative numerals XIIX and IIXX aren't handled
+      assert Roman.decode("IIII", strict: false) == {:ok, 4}
+      assert Roman.decode("VIIII", strict: false) == {:ok, 9}
+      assert Roman.decode("IIIIII", strict: false) == {:ok, 6}
+      assert Roman.decode("XXXXXX", strict: false) == {:ok, 60}
+      assert Roman.decode("MDCCCCX", strict: false) == {:ok, 1910}
+      assert Roman.decode("MDCDIII", strict: false) == {:ok, 1903}
+    end
   end
 
   test "decode!/1 raises ArgumentError on invalid input" do

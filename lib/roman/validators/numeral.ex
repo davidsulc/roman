@@ -5,19 +5,15 @@ defmodule Roman.Validators.Numeral do
 
   @type ok_numeral_or_error :: {:ok, Roman.numeral} | Roman.error
 
-  @doc """
-  Validates the numeral.
-
-  Runs all other validators defined in this module, returning the given
-  numeral or `{:error, atom, message}` on validation failure.
-  """
   @spec validate(Roman.numeral) :: Roman.numeral | Roman.error
-  def validate(numeral) when is_binary(numeral) do
+  def validate(numeral, opts \\ [strict: true]) when is_binary(numeral) do
     with  {:ok, numeral} <- only_valid_numerals(numeral),
-          {:ok, numeral} <- max_3_consecutive_repetitions(numeral),
-          {:ok, numeral} <- only_one_v_l_d(numeral) do
+          {:strict, true, numeral} <- {:strict, opts[:strict], numeral},
+          {:ok, numeral} <- only_one_v_l_d(numeral),
+          {:ok, numeral} <- max_3_consecutive_repetitions(numeral) do
       {:ok, numeral}
     else
+      {:strict, _, numeral} -> {:ok, numeral}
       {:error, _, _} = error -> error
     end
   end

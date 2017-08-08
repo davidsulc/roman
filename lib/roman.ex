@@ -30,6 +30,9 @@ defmodule Roman do
     * `:ignore_case` (boolean) - if `true`, strings will be decoded regardless
       of casing. If `false` (default), strings containing a lowercase letter
       will return an error.
+    * `:strict` (boolean) - if `true` (default), strings not conforming to
+      composition rules will return an error. If `false` the numeral components
+      will be decomposed and added, and the result will be returned.
 
   This function returns:
 
@@ -58,6 +61,8 @@ defmodule Roman do
       {:ok, 3898}
       iex> Roman.decode("vi", ignore_case: true)
       {:ok, 6}
+      iex> Roman.decode("IIII", strict: false)
+      {:ok, 4}
       iex> Roman.decode("LLVIV")
       {:error, :repeated_vld,
       "letters V, L, and D can appear only once, but found several instances of L, V"}
