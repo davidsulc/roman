@@ -1,6 +1,6 @@
 defmodule Roman do
   @moduledoc """
-  Functions to work with roman numerals from 1 to 4000 (not included)
+  Functions to work with roman numerals in the 1..3999 range
   """
 
   @external_resource "lib/numerals.txt"
