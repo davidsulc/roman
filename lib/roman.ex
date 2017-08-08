@@ -16,10 +16,7 @@ defmodule Roman do
   @type error :: {atom, atom, String.t}
   @type numeral :: String.t
 
-  @doc """
-  Returns a list of `{int_value, numeral_string}` tuples for all possible
-  numerals.
-  """
+  @doc false
   @spec numeral_pairs() :: [{integer, numeral}]
   def numeral_pairs, do: @numeral_pairs
 
