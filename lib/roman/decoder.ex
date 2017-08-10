@@ -85,7 +85,7 @@ defmodule Roman.Decoder do
   # complete numeral decoder to handle "alternative forms"
   # see e.g. https://en.wikipedia.org/wiki/Roman_numerals#Alternative_forms
   def decode(numeral, %{explain: explain} = opts) when is_binary(numeral) do
-    case get_sequence(numeral, opts) do
+    case sequence(numeral, opts) do
       {:error, _} = error ->
         if explain, do: error, else: @default_error
       {:ok, seq} ->
@@ -93,9 +93,9 @@ defmodule Roman.Decoder do
     end
   end
 
-  @spec get_sequence(Roman.numeral, map)
+  @spec sequence(Roman.numeral, map)
       :: {:ok, [decoded_numeral]} | Roman.error
-  defp get_sequence(numeral, %{strict: strict}) do
+  defp sequence(numeral, %{strict: strict}) do
     with  {:ok, numeral} <- Numeral.validate(numeral, strict: strict),
           {:ok, seq} <- decode_sections(numeral) do
       if strict, do: Sequence.validate(seq), else: {:ok, seq}
