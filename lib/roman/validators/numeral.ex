@@ -14,7 +14,7 @@ defmodule Roman.Validators.Numeral do
       {:ok, numeral}
     else
       {:strict, _, numeral} -> {:ok, numeral}
-      {:error, _, _} = error -> error
+      {:error, _} = error -> error
     end
   end
 
@@ -27,9 +27,9 @@ defmodule Roman.Validators.Numeral do
       [] -> {:ok, numeral}
       invalid_letters ->
         pretty_numerals = Enum.join(@valid_numerals, ", ")
-        {:error, :invalid_letter, "numeral contains invalid letter(s), "
+        {:error, {:invalid_letter, "numeral contains invalid letter(s), "
             <> "valid letters are #{pretty_numerals} but encountered "
-            <> Enum.join(invalid_letters, ", ")}
+            <> Enum.join(invalid_letters, ", ")}}
     end
   end
 
@@ -47,9 +47,9 @@ defmodule Roman.Validators.Numeral do
     |> case do
       [] -> {:ok, numeral}
       keys ->
-        {:error, :repeated_vld,
+        {:error, {:repeated_vld,
             "letters V, L, and D can appear only once, "
-            <> "but found several instances of #{Enum.join(keys, ", ")}"}
+            <> "but found several instances of #{Enum.join(keys, ", ")}"}}
     end
   end
 
@@ -81,9 +81,9 @@ defmodule Roman.Validators.Numeral do
     |> case do
       [] -> {:ok, numeral}
       letters ->
-        {:error, :identical_letter_seq_too_long,
+        {:error, {:identical_letter_seq_too_long,
             "a given letter cannot appear more than 3 times in a row: "
-            <> "encountered invalid sequences for #{Enum.join(letters, ", ")}"}
+            <> "encountered invalid sequences for #{Enum.join(letters, ", ")}"}}
     end
   end
 end

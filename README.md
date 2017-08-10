@@ -31,9 +31,10 @@ iex> Roman.decode("ix", ignore_case: true)
 iex> Roman.decode!("XVI")
 16
 iex> Roman.decode("CMC")
-{:error, :value_greater_than_subtraction, "once a value has been subtracted from
-  another, no further numeral or pair may match or exceed the subtracted value,
-  but encountered C (100) after having previously subtracted 100 (in CM)"}
+{:error, {:value_greater_than_subtraction, "once a value has been subtracted
+  from another, no further numeral or pair may match or exceed the subtracted
+  value, but encountered C (100) after having previously subtracted
+  100 (in CM)"}}
 
 iex> Roman.encode(16)
 {:ok, "XVI"}

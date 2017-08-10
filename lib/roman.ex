@@ -13,7 +13,8 @@ defmodule Roman do
     |> Enum.to_list
   )
 
-  @type error :: {atom, atom, String.t}
+  @type error :: {:error, error_atom}
+  @type error_atom :: {atom, String.t}
   @type numeral :: String.t
 
   @doc false
@@ -37,22 +38,22 @@ defmodule Roman do
   This function returns:
 
   - `{:ok, value}` - the integer value of the provided numeral.
-  - `{:error, reason, message}` - the provided numeral is invalid.
+  - `{:error, reason}` - the provided numeral is invalid.
 
-  Possible errors are:
+  Possible error reasons are:
 
-  - `{:error, :empty_string, _}`: string is empty
-  - `{:error, :invalid_letter, _}`: if the provided string contains a character
-      that isn't one of I, V, X, L, C, D, M
-  - `{:error, :repeated_vld, _}`: string contains more than one instance each
+  - `{:empty_string, _}`: string is empty
+  - `{:invalid_letter, _}`: if the provided string contains a
+      character that isn't one of I, V, X, L, C, D, M
+  - `{:repeated_vld, _}`: string contains more than one instance each
       of letters V, L, and D (i.e. numerals corresponding to numbers starting
       with a 5)
-  - `{:error, :identical_letter_seq_too_long, _}`: string has a sequence of 4
+  - `{:identical_letter_seq_too_long, _}`: string has a sequence of 4
       or more identical letters
-  - `{:error, :sequence_increasing, _}`: string contains a value greater than
+  - `{:sequence_increasing, _}`: string contains a value greater than
       one appearing before it (rule applies to combined value in subtractive
       case)
-  - `{:error, :value_greater_than_subtraction, _}`: string contains a value
+  - `{:value_greater_than_subtraction, _}`: string contains a value
       matching or exceding a previously subtracted value
 
   ### Examples
@@ -64,8 +65,8 @@ defmodule Roman do
       iex> Roman.decode("IIII", strict: false)
       {:ok, 4}
       iex> Roman.decode("LLVIV")
-      {:error, :repeated_vld,
-      "letters V, L, and D can appear only once, but found several instances of L, V"}
+      {:error, {:repeated_vld,
+      "letters V, L, and D can appear only once, but found several instances of L, V"}}
   """
   @spec decode(String.t, keyword) :: {:ok, integer} | Roman.error
   defdelegate decode(numeral, options \\ []), to: __MODULE__.Decoder
@@ -81,7 +82,7 @@ defmodule Roman do
     case decode(numeral, options) do
       {:ok, val} ->
         val
-      {:error, _, message} ->
+      {:error, {_, message}} ->
         raise ArgumentError, message: message
     end
   end
@@ -94,7 +95,7 @@ defmodule Roman do
   This function returns:
 
   - `{:ok, numeral}` - the nuermal corresponding to the provided integer.
-  - `{:error, :invalid_integer, message}` - the provided integer is not within
+  - `{:error, {:invalid_integer, message}}` - the provided integer is not within
       the acceptable 1..3999 range.
 
   ### Examples
@@ -102,7 +103,8 @@ defmodule Roman do
       iex> Roman.encode(3898)
       {:ok, "MMMDCCCXCVIII"}
       iex> Roman.encode(4000)
-      {:error, :invalid_integer, "cannot encode values outside of range 1..3999"}
+      {:error, {:invalid_integer,
+      "cannot encode values outside of range 1..3999"}}
   """
   @spec encode(integer) :: {:ok, Roman.numeral} | Roman.error
   defdelegate encode(integer), to: __MODULE__.Encoder
@@ -118,7 +120,7 @@ defmodule Roman do
     case encode(int) do
       {:ok, numeral} ->
         numeral
-      {:error, _, message} ->
+      {:error, {_, message}} ->
         raise ArgumentError, message: message
     end
   end

@@ -7,7 +7,7 @@ defmodule Roman.Validators.Sequence do
   Validates that the sequence of decoded numerals.
 
   Runs all other validators defined in this module, returning the given
-  sequence or `{:error, atom, message}` on validation failure.
+  sequence or `{:error, reason}` on validation failure.
   """
   @spec validate(sequence) :: sequence | Roman.error
   def validate(seq) do
@@ -15,7 +15,7 @@ defmodule Roman.Validators.Sequence do
           {:ok, seq} <- subtraction_bounds_following_values(seq) do
       {:ok, seq}
     else
-      {:error, _, _} = error -> error
+      {:error, _} = error -> error
     end
   end
 
@@ -23,7 +23,7 @@ defmodule Roman.Validators.Sequence do
   defp increasing_value_order(seq) when is_list(seq) do
     case check_increasing_value_order(seq) do
       :ok -> {:ok, seq}
-      {:error, _, _} = error -> error
+      {:error, _} = error -> error
     end
   end
 
@@ -39,9 +39,9 @@ defmodule Roman.Validators.Sequence do
 
   defp check_increasing_value_order([{num_l, %{value: val_l}},
       {num_r, %{value: val_r}} | _]) do
-    {:error, :sequence_increasing,
+    {:error, {:sequence_increasing,
       "larger numerals must be placed to the left of smaller numerals, but "
-      <> "encountered #{num_l} (#{val_l}) before #{num_r} (#{val_r})"}
+      <> "encountered #{num_l} (#{val_l}) before #{num_r} (#{val_r})"}}
   end
 
   # Once a value has been subtracted from another, no further numeral or pair
@@ -52,7 +52,7 @@ defmodule Roman.Validators.Sequence do
   defp subtraction_bounds_following_values(seq) do
     case check_subtraction_bound(seq, nil) do
       :ok -> {:ok, seq}
-      {:error, _, _} = error -> error
+      {:error, _} = error -> error
     end
   end
 
@@ -80,10 +80,10 @@ defmodule Roman.Validators.Sequence do
 
   defp check_subtraction_bound([{num, %{value: v}} | _], {delta, delta_num})
       when v >= delta do
-    {:error, :value_greater_than_subtraction,
+    {:error, {:value_greater_than_subtraction,
       "once a value has been subtracted from another, no further numeral or "
       <> "pair may match or exceed the subtracted value, but encountered "
       <> "#{num} (#{v}) after having previously subtracted #{delta} "
-      <> "(in #{delta_num})"}
+      <> "(in #{delta_num})"}}
   end
 end

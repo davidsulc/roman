@@ -21,22 +21,22 @@ defmodule Roman.Decoder do
   This function returns:
 
   - `{:ok, value}` - the integer value of the provided numeral.
-  - `{:error, reason, message}` - the provided numeral is invalid.
+  - `{:error, reason}` - the provided numeral is invalid.
 
   Possible errors are:
 
-  - `{:error, :empty_string, _}`: string is empty
-  - `{:error, :invalid_letter, _}`: if the provided string contains a character
+  - `{:empty_string, _}`: string is empty
+  - `{:invalid_letter, _}`: if the provided string contains a character
       that isn't one of I, V, X, L, C, D, M
-  - `{:error, :repeated_vld, _}`: string contains more than one instance each
+  - `{:repeated_vld, _}`: string contains more than one instance each
       of letters V, L, and D (i.e. numerals corresponding to numbers starting
       with a 5)
-  - `{:error, :identical_letter_seq_too_long, _}`: string has a sequence of 4
+  - `{:identical_letter_seq_too_long, _}`: string has a sequence of 4
       or more identical letters
-  - `{:error, :sequence_increasing, _}`: string contains a value greater than
+  - `{:sequence_increasing, _}`: string contains a value greater than
       one appearing before it (rule applies to combined value in subtractive
       case)
-  - `{:error, :value_greater_than_subtraction, _}`: string contains a value
+  - `{:value_greater_than_subtraction, _}`: string contains a value
       matching or exceding a previously subtracted value
 
   ### Examples
@@ -46,8 +46,8 @@ defmodule Roman.Decoder do
       iex> decode("vi", ignore_case: true)
       {:ok, 6}
       iex> decode("LLVIV")
-      {:error, :repeated_vld,
-      "letters V, L, and D can appear only once, but found several instances of L, V"}
+      {:error, {:repeated_vld,
+      "letters V, L, and D can appear only once, but found several instances of L, V"}}
   """
   @spec decode(String.t, keyword | map) :: {:ok, integer} | Roman.error
   def decode(numeral, options \\ [])
@@ -69,7 +69,7 @@ defmodule Roman.Decoder do
   end
 
   def decode("", _),
-    do: {:error, :empty_string, "expected a numeral, got an empty string"}
+    do: {:error, {:empty_string, "expected a numeral, got an empty string"}}
 
   for {val, num} <- Roman.numeral_pairs do
     def decode(unquote(num), _), do: {:ok, unquote(val)}
@@ -79,7 +79,7 @@ defmodule Roman.Decoder do
   # see e.g. https://en.wikipedia.org/wiki/Roman_numerals#Alternative_forms
   def decode(numeral, opts) when is_binary(numeral) and is_map(opts) do
     case get_sequence(numeral, opts) do
-      {:error, _, _} = error ->
+      {:error, _} = error ->
         error
       {:ok, seq} ->
         {:ok, Enum.reduce(seq, 0, fn {_, %{value: v}}, acc -> v + acc end)}
@@ -93,7 +93,7 @@ defmodule Roman.Decoder do
           {:ok, seq} <- decode_sections(numeral) do
       if strict, do: Sequence.validate(seq), else: {:ok, seq}
     else
-      {:error, _, _} = error -> error
+      {:error, _} = error -> error
     end
   end
 

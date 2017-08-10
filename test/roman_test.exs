@@ -6,28 +6,28 @@ defmodule RomanTest do
 
   describe "decode/1 validations" do
     test "empty string is invalid" do
-      assert {:error, :empty_string, _} = Roman.decode("")
+      assert {:error, {:empty_string, _}} = Roman.decode("")
     end
 
     test "IT is invalid" do
-      assert {:error, :invalid_letter, _} = Roman.decode("IT")
+      assert {:error, {:invalid_letter, _}} = Roman.decode("IT")
     end
 
     test "VIV is invalid" do
-      assert {:error, :repeated_vld, _} = Roman.decode("VIV")
+      assert {:error, {:repeated_vld, _}} = Roman.decode("VIV")
     end
 
     test "IIII is invalid" do
-      assert {:error, :identical_letter_seq_too_long, _} =
+      assert {:error, {:identical_letter_seq_too_long, _}} =
           Roman.decode("IIII")
     end
 
     test "VX is invalid" do
-      assert {:error, :sequence_increasing, _} = Roman.decode("VX")
+      assert {:error, {:sequence_increasing, _}} = Roman.decode("VX")
     end
 
     test "CMC is invalid" do
-      assert {:error, :value_greater_than_subtraction, _} =
+      assert {:error, {:value_greater_than_subtraction, _}} =
           Roman.decode("CMC")
     end
   end
@@ -43,13 +43,13 @@ defmodule RomanTest do
     end
 
     test ":ignore_case option" do
-      assert {:error, _, _} = Roman.decode("x")
+      assert {:error, _} = Roman.decode("x")
       assert Roman.decode("x", ignore_case: true) == {:ok, 10}
     end
 
     test ":strict option" do
-      assert {:error, _, _} = Roman.decode("IIII")
-      assert {:error, _, _} = Roman.decode("A", strict: false)
+      assert {:error, _} = Roman.decode("IIII")
+      assert {:error, _} = Roman.decode("A", strict: false)
       # example of alternative numerals taken from
       # https://en.wikipedia.org/wiki/Roman_numerals#Alternative_forms
       # Note that alternative numerals XIIX and IIXX aren't handled
