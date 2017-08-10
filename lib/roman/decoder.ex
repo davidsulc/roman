@@ -59,7 +59,7 @@ defmodule Roman.Decoder do
     flags =
       options
       |> Keyword.take(@valid_options)
-      |> Enum.into(%{explain: false, ignore_case: false, strict: true})
+      |> Enum.into(default_flags())
 
     maybe_upcase = fn
       numeral, %{ignore_case: true} -> String.upcase(numeral)
@@ -91,6 +91,21 @@ defmodule Roman.Decoder do
       {:ok, seq} ->
         {:ok, Enum.reduce(seq, 0, fn {_, %{value: v}}, acc -> v + acc end)}
     end
+  end
+
+  @spec default_flags() :: map
+  defp default_flags do
+    config =
+      :roman
+      |> Application.get_env(:default_flags, %{})
+      |> Map.take(@valid_options)
+
+    %{
+      explain: false,
+      ignore_case: false,
+      strict: true
+    }
+    |> Map.merge(config)
   end
 
   @spec sequence(Roman.numeral, map)

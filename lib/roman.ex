@@ -41,6 +41,14 @@ defmodule Roman do
       composition rules will return an error. If `false` the numeral components
       will be decomposed and added, and the result will be returned.
 
+    Default values for options can be set in `config.exs`using the `:roman`
+    application and the `:default_flags` key, for example:
+
+        config :roman, :default_flags, %{ignore_case: true}
+
+    The values will remain overrideable on a per-call basis by passing the
+    desired option value.
+
   This function returns:
 
   - `{:ok, value}` - the integer value of the provided numeral.
