@@ -47,6 +47,8 @@ defmodule Roman.Decoder do
       iex> decode("vi", ignore_case: true)
       {:ok, 6}
       iex> decode("LLVIV")
+      {:error, {:invalid_numeral, "numeral is invalid"}}
+      iex> decode("LLVIV", explain: true)
       {:error, {:repeated_vld,
       "letters V, L, and D can appear only once, but found several instances of L, V"}}
   """
@@ -57,7 +59,7 @@ defmodule Roman.Decoder do
     flags =
       options
       |> Keyword.take(@valid_options)
-      |> Enum.into(%{explain: true, ignore_case: false, strict: true})
+      |> Enum.into(%{explain: false, ignore_case: false, strict: true})
 
     maybe_upcase = fn
       numeral, %{ignore_case: true} -> String.upcase(numeral)

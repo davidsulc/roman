@@ -65,6 +65,8 @@ defmodule Roman do
       iex> Roman.decode("IIII", strict: false)
       {:ok, 4}
       iex> Roman.decode("LLVIV")
+      {:error, {:invalid_numeral, "numeral is invalid"}}
+      iex> Roman.decode("LLVIV", explain: true)
       {:error, {:repeated_vld,
       "letters V, L, and D can appear only once, but found several instances of L, V"}}
   """

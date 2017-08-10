@@ -1,6 +1,11 @@
 # Changelog
 
-## 0.1.1
+## 0.2.0
+
+Added `:explain` option to decoder (default `false`)
+
+Changed error format to `{:error, reason}` with `reason` having format
+`{atom, messages}`
 
 Added a `strict: boolean` option to `Roman.decode/2`:
 

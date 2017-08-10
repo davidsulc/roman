@@ -2,33 +2,42 @@ defmodule RomanTest do
   use ExUnit.Case, async: true
   doctest Roman
 
+  @default_error {:error, {:invalid_numeral, "numeral is invalid"}}
+
   alias Test.Support.Converter
 
   describe "decode/1 validations" do
     test "empty string is invalid" do
       assert {:error, {:empty_string, _}} = Roman.decode("")
+      assert {:error, {:empty_string, _}} = Roman.decode("", explain: true)
     end
 
     test "IT is invalid" do
-      assert {:error, {:invalid_letter, _}} = Roman.decode("IT")
+      assert Roman.decode("IT") == @default_error
+      assert {:error, {:invalid_letter, _}} = Roman.decode("IT", explain: true)
     end
 
     test "VIV is invalid" do
-      assert {:error, {:repeated_vld, _}} = Roman.decode("VIV")
+      assert Roman.decode("VIV") == @default_error
+      assert {:error, {:repeated_vld, _}} = Roman.decode("VIV", explain: true)
     end
 
     test "IIII is invalid" do
+      assert Roman.decode("IIII") == @default_error
       assert {:error, {:identical_letter_seq_too_long, _}} =
-          Roman.decode("IIII")
+          Roman.decode("IIII", explain: true)
     end
 
     test "VX is invalid" do
-      assert {:error, {:sequence_increasing, _}} = Roman.decode("VX")
+      assert Roman.decode("VX") == @default_error
+      assert {:error, {:sequence_increasing, _}} =
+        Roman.decode("VX", explain: true)
     end
 
     test "CMC is invalid" do
+      assert Roman.decode("CMC") == @default_error
       assert {:error, {:value_greater_than_subtraction, _}} =
-          Roman.decode("CMC")
+          Roman.decode("CMC", explain: true)
     end
   end
 
@@ -49,7 +58,10 @@ defmodule RomanTest do
 
     test ":strict option" do
       assert {:error, _} = Roman.decode("IIII")
-      assert {:error, _} = Roman.decode("A", strict: false)
+      assert Roman.decode("A", strict: false) == @default_error
+      assert {:error, {:invalid_letter, _}} =
+        Roman.decode("A", strict: false, explain: true)
+
       # example of alternative numerals taken from
       # https://en.wikipedia.org/wiki/Roman_numerals#Alternative_forms
       # Note that alternative numerals XIIX and IIXX aren't handled
