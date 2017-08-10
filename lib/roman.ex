@@ -28,6 +28,12 @@ defmodule Roman do
   option is set to `true`.
 
   ## Options
+    * `:explain` (boolean) - if `true`, error reasons will be more specific in
+      indicating what the problem with the provided numeral is (slightly
+      degrades performance in error cases, as the numeral must be inspected to
+      determine the cause of the error). If `false` (default), a generic error
+      reason will be returned in most cases (see "Error reasons" below for more
+      information).
     * `:ignore_case` (boolean) - if `true`, strings will be decoded regardless
       of casing. If `false` (default), strings containing a lowercase letter
       will return an error.
@@ -40,21 +46,31 @@ defmodule Roman do
   - `{:ok, value}` - the integer value of the provided numeral.
   - `{:error, reason}` - the provided numeral is invalid.
 
-  Possible error reasons are:
+  ## Error reasons
 
-  - `{:empty_string, _}`: string is empty
+  Possible error reasons are listed below.
+
+  When `:explain` is `false` (default value):
+
+  - `{:empty_string, _}`: string is empty.
+  - `{:invalid_numeral, _}`: string isn't a valid numeral.
+
+  When `:explain` is `true`:
+
+  - `{:empty_string, _}`: string is empty.
   - `{:invalid_letter, _}`: if the provided string contains a
-      character that isn't one of I, V, X, L, C, D, M
+      character that isn't one of I, V, X, L, C, D, M.
   - `{:repeated_vld, _}`: string contains more than one instance each
       of letters V, L, and D (i.e. numerals corresponding to numbers starting
-      with a 5)
+      with a 5). Cannpt happen if `:strict` is `false`.
   - `{:identical_letter_seq_too_long, _}`: string has a sequence of 4
-      or more identical letters
+      or more identical letters. Cannpt happen if `:strict` is `false`.
   - `{:sequence_increasing, _}`: string contains a value greater than
       one appearing before it (rule applies to combined value in subtractive
-      case)
+      case). Cannpt happen if `:strict` is `false`.
   - `{:value_greater_than_subtraction, _}`: string contains a value
-      matching or exceding a previously subtracted value
+      matching or exceding a previously subtracted value. Cannpt happen if
+      `:strict` is `false`.
 
   ### Examples
 
