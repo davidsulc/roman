@@ -3,7 +3,8 @@ defmodule Roman.Decoder do
 
   alias Roman.Validators.{Numeral, Sequence}
 
-  @valid_options [:ignore_case, :strict]
+  @default_error {:error, {:invalid_numeral, "numeral is invalid"}}
+  @valid_options [:explain, :ignore_case, :strict]
 
   @type decoded_numeral :: {Roman.numeral, map}
 
@@ -56,7 +57,7 @@ defmodule Roman.Decoder do
     flags =
       options
       |> Keyword.take(@valid_options)
-      |> Enum.into(%{strict: true})
+      |> Enum.into(%{explain: true, ignore_case: false, strict: true})
 
     maybe_upcase = fn
       numeral, %{ignore_case: true} -> String.upcase(numeral)
@@ -75,12 +76,16 @@ defmodule Roman.Decoder do
     def decode(unquote(num), _), do: {:ok, unquote(val)}
   end
 
+  def decode(numeral, %{strict: true, explain: false}) when is_binary(numeral) do
+    @default_error
+  end
+
   # complete numeral decoder to handle "alternative forms"
   # see e.g. https://en.wikipedia.org/wiki/Roman_numerals#Alternative_forms
-  def decode(numeral, opts) when is_binary(numeral) and is_map(opts) do
+  def decode(numeral, %{explain: explain} = opts) when is_binary(numeral) do
     case get_sequence(numeral, opts) do
       {:error, _} = error ->
-        error
+        if explain, do: error, else: @default_error
       {:ok, seq} ->
         {:ok, Enum.reduce(seq, 0, fn {_, %{value: v}}, acc -> v + acc end)}
     end
