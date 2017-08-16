@@ -70,14 +70,14 @@ defmodule Roman do
       character that isn't one of I, V, X, L, C, D, M.
   - `{:repeated_vld, _}`: string contains more than one instance each
       of letters V, L, and D (i.e. numerals corresponding to numbers starting
-      with a 5). Cannpt happen if `:strict` is `false`.
+      with a 5). Cannot happen if `:strict` is `false`.
   - `{:identical_letter_seq_too_long, _}`: string has a sequence of 4
-      or more identical letters. Cannpt happen if `:strict` is `false`.
+      or more identical letters. Cannot happen if `:strict` is `false`.
   - `{:sequence_increasing, _}`: string contains a value greater than
       one appearing before it (rule applies to combined value in subtractive
-      case). Cannpt happen if `:strict` is `false`.
+      case). Cannot happen if `:strict` is `false`.
   - `{:value_greater_than_subtraction, _}`: string contains a value
-      matching or exceding a previously subtracted value. Cannpt happen if
+      matching or exceding a previously subtracted value. Cannot happen if
       `:strict` is `false`.
 
   ### Examples
