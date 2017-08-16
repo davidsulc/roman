@@ -13,8 +13,8 @@ defmodule Roman do
     |> Enum.to_list
   )
 
-  @type error :: {:error, error_atom}
-  @type error_atom :: {atom, String.t}
+  @type error :: {:error, error_tuple}
+  @type error_tuple :: {atom, String.t}
   @type numeral :: String.t
 
   @doc false
