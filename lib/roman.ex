@@ -80,6 +80,10 @@ defmodule Roman do
       matching or exceding a previously subtracted value. Cannot happen if
       `:strict` is `false`.
 
+  For more information on how roman numerals should be composed according to
+  the `:strict` rules, see the [composition rules](composition_rules.html)
+  documentation page.
+
   ### Examples
 
       iex> Roman.decode("MMMDCCCXCVIII")

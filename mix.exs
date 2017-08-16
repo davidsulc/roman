@@ -8,7 +8,8 @@ defmodule Roman.Mixfile do
      elixirc_paths: elixirc_paths(Mix.env),
      build_embedded: Mix.env == :prod,
      start_permanent: Mix.env == :prod,
-     deps: deps()]
+     deps: deps(),
+     docs: docs()]
   end
 
   # Configuration for the OTP application
@@ -37,6 +38,16 @@ defmodule Roman.Mixfile do
       {:credo, "~> 0.8", only: [:dev, :test], runtime: false},
       {:dialyxir, "~> 0.5", only: [:dev], runtime: false},
       {:ex_doc, "~> 0.14", only: :dev, runtime: false}
+    ]
+  end
+
+  defp docs do
+    [
+      main: "readme",
+      extras: [
+        "README.md": [filename: "readme", title: "Readme"],
+        "pages/composition_rules.md": []
+      ]
     ]
   end
 end
