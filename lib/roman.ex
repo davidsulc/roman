@@ -40,6 +40,8 @@ defmodule Roman do
     * `:strict` (boolean) - if `true` (default), strings not conforming to
       composition rules will return an error. If `false` the numeral components
       will be decomposed and added, and the result will be returned.
+    * `:zero` - if `true`, the numeral N will be decoded as 0. This option has
+      no influence on decoding other numerals.
 
     Default values for options can be set in `config.exs`using the `:roman`
     application and the `:default_flags` key, for example:
@@ -90,6 +92,8 @@ defmodule Roman do
       {:ok, 3898}
       iex> Roman.decode("vi", ignore_case: true)
       {:ok, 6}
+      iex> Roman.decode("N", zero: true)
+      {:ok, 0}
       iex> Roman.decode("IIII", strict: false)
       {:ok, 4}
       iex> Roman.decode("LLVIV")

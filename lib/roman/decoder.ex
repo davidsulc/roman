@@ -4,7 +4,7 @@ defmodule Roman.Decoder do
   alias Roman.Validators.{Numeral, Sequence}
 
   @default_error {:error, {:invalid_numeral, "numeral is invalid"}}
-  @valid_options [:explain, :ignore_case, :strict]
+  @valid_options [:explain, :ignore_case, :strict, :zero]
 
   @type decoded_numeral :: {Roman.numeral, map}
 
@@ -73,6 +73,9 @@ defmodule Roman.Decoder do
 
   def decode("", _),
     do: {:error, {:empty_string, "expected a numeral, got an empty string"}}
+
+  def decode("N", %{zero: true}),
+    do: {:ok, 0}
 
   for {val, num} <- Roman.numeral_pairs do
     def decode(unquote(num), _), do: {:ok, unquote(val)}

@@ -72,6 +72,13 @@ defmodule RomanTest do
       assert Roman.decode("MDCCCCX", strict: false) == {:ok, 1910}
       assert Roman.decode("MDCDIII", strict: false) == {:ok, 1903}
     end
+
+    test ":zero option" do
+      assert {:error, _} = Roman.decode("N")
+      assert Roman.decode("N", zero: true) == {:ok, 0}
+      assert Roman.decode("n", ignore_case: true, zero: true) == {:ok, 0}
+      assert Roman.decode("N", strict: true, zero: true) == {:ok, 0}
+    end
   end
 
   test "decode!/1 raises ArgumentError on invalid input" do
