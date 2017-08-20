@@ -4,7 +4,7 @@ A production-ready encoder/decoder for roman numerals, with detailed validation.
 
 ## Installation
 
-If [available in Hex](https://hex.pm/docs/publish) (**NOT YET THE CASE!**),
+<!-- If [available in Hex](https://hex.pm/docs/publish) (**NOT YET THE CASE!**),
 the package can be installed
 by adding `roman` to your list of dependencies in `mix.exs`:
 
@@ -16,7 +16,22 @@ end
 
 Documentation can be generated with [ExDoc](https://github.com/elixir-lang/ex_doc)
 and published on [HexDocs](https://hexdocs.pm). Once published, the docs can
-be found at [https://hexdocs.pm/roman](https://hexdocs.pm/roman).
+be found at [https://hexdocs.pm/roman](https://hexdocs.pm/roman). -->
+
+This package isn't yet available in Hex, but can still be installed
+by adding `roman` to your list of dependencies in `mix.exs`:
+
+```elixir
+def deps do
+  [{:roman, "https://github.com/davidsulc/roman.git", tag: "0.2.0"}]
+end
+```
+
+## Documentation
+
+Documentation can be generated locally with
+[ExDoc](https://github.com/elixir-lang/ex_doc) using the `mix docs` command.
+Once generated, the docs can be accessed by opening `doc/index.html`.
 
 ## Basic Usage
 
