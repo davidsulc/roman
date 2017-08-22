@@ -23,9 +23,11 @@ by adding `roman` to your list of dependencies in `mix.exs`:
 
 ```elixir
 def deps do
-  [{:roman, "https://github.com/davidsulc/roman.git", tag: "0.2.0"}]
+  [{:roman, github: "davidsulc/roman", tag: "0.2.0"}]
 end
 ```
+
+Then, run `mix deps.get` to download and install.
 
 ## Documentation
 
