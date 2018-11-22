@@ -59,6 +59,22 @@ iex> Roman.encode!(16)
 "XVI"
 ```
 
+## Alternative Forms
+
+`Roman` can handle [alternative forms](https://en.wikipedia.org/wiki/Roman_numerals#Alternative_forms)
+and differentiate them. For example, by default decoding VXL will return an error (since 45 should be
+encoded as XLV). However, the `:strict` option can be set to `false` to accept decoding alternative forms:
+
+```elixir
+iex> Roman.decode("VXL")
+{:error, {:invalid_numeral, "numeral is invalid"}}
+
+iex> Roman.decode("VXL", strict: false)
+{:ok, 45}
+```
+
+Other libraries typically won't differentiate between VXL and XLV, considering both equally valid.
+
 ## Author
 
 David Sulc
