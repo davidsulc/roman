@@ -146,7 +146,7 @@ defmodule Roman do
   Similar to `encode/1` but raises an error if the integer could not be
   encoded.
 
-  If it succeeds in encoding the numeral, it returns corresponding numeral.
+  If it succeeds in encoding the numeral, it returns the corresponding numeral.
   """
   @spec encode!(integer) :: Roman.numeral() | no_return
   def encode!(int) do
@@ -167,6 +167,7 @@ defmodule Roman do
       ignoring casing. If `false` (default), strings containing a lowercase
       letter will return `false`.
 
+  ```
   iex> Roman.numeral?("VI")
   true
   iex> Roman.numeral?("FOO")
@@ -175,6 +176,7 @@ defmodule Roman do
   false
   iex> Roman.numeral?("x", ignore_case: true)
   true
+  ```
   """
   @spec numeral?(String.t(), keyword) :: boolean
   def numeral?(string, options \\ []) do
