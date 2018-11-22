@@ -24,30 +24,28 @@ defmodule RomanTest do
 
     test "IIII is invalid" do
       assert Roman.decode("IIII") == @default_error
-      assert {:error, {:identical_letter_seq_too_long, _}} =
-          Roman.decode("IIII", explain: true)
+      assert {:error, {:identical_letter_seq_too_long, _}} = Roman.decode("IIII", explain: true)
     end
 
     test "VX is invalid" do
       assert Roman.decode("VX") == @default_error
-      assert {:error, {:sequence_increasing, _}} =
-        Roman.decode("VX", explain: true)
+      assert {:error, {:sequence_increasing, _}} = Roman.decode("VX", explain: true)
     end
 
     test "CMC is invalid" do
       assert Roman.decode("CMC") == @default_error
-      assert {:error, {:value_greater_than_subtraction, _}} =
-          Roman.decode("CMC", explain: true)
+      assert {:error, {:value_greater_than_subtraction, _}} = Roman.decode("CMC", explain: true)
     end
   end
 
   describe "decode/1" do
     test "all valid numerals" do
-      for num <- Converter.all_numerals do
+      for num <- Converter.all_numerals() do
         expected = Converter.convert(num)
         {:ok, result} = Roman.decode(num)
+
         assert result == expected,
-            "Expected decode(\"#{num}\") to yield #{expected}, but got #{result}"
+               "Expected decode(\"#{num}\") to yield #{expected}, but got #{result}"
       end
     end
 
@@ -59,8 +57,7 @@ defmodule RomanTest do
     test ":strict option" do
       assert {:error, _} = Roman.decode("IIII")
       assert Roman.decode("A", strict: false) == @default_error
-      assert {:error, {:invalid_letter, _}} =
-        Roman.decode("A", strict: false, explain: true)
+      assert {:error, {:invalid_letter, _}} = Roman.decode("A", strict: false, explain: true)
 
       # example of alternative numerals taken from
       # https://en.wikipedia.org/wiki/Roman_numerals#Alternative_forms
@@ -93,9 +90,9 @@ defmodule RomanTest do
   end
 
   test "numeral_pairs/1" do
-    values = Enum.map(Roman.numeral_pairs, fn {val, _} -> val end)
+    values = Enum.map(Roman.numeral_pairs(), fn {val, _} -> val end)
     assert values == Enum.to_list(1..3999)
-    assert [{1, "I"}, {2, "II"} | _] = Roman.numeral_pairs
+    assert [{1, "I"}, {2, "II"} | _] = Roman.numeral_pairs()
   end
 
   describe "encode/1" do
@@ -103,8 +100,9 @@ defmodule RomanTest do
       for int <- 1..3999 do
         expected = Converter.convert(int)
         {:ok, result} = Roman.encode(int)
+
         assert result == expected,
-            "Expected encode(\"#{int}\") to yield #{expected}, but got #{result}"
+               "Expected encode(\"#{int}\") to yield #{expected}, but got #{result}"
       end
     end
   end

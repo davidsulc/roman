@@ -2,14 +2,16 @@ defmodule Roman.Mixfile do
   use Mix.Project
 
   def project do
-    [app: :roman,
-     version: "0.2.0",
-     elixir: "~> 1.4",
-     elixirc_paths: elixirc_paths(Mix.env),
-     build_embedded: Mix.env == :prod,
-     start_permanent: Mix.env == :prod,
-     deps: deps(),
-     docs: docs()]
+    [
+      app: :roman,
+      version: "0.2.0",
+      elixir: "~> 1.4",
+      elixirc_paths: elixirc_paths(Mix.env()),
+      build_embedded: Mix.env() == :prod,
+      start_permanent: Mix.env() == :prod,
+      deps: deps(),
+      docs: docs()
+    ]
   end
 
   # Configuration for the OTP application
@@ -22,7 +24,7 @@ defmodule Roman.Mixfile do
 
   # Specifies which paths to compile per environment
   defp elixirc_paths(:test), do: ["lib", "test/support"]
-  defp elixirc_paths(_),     do: ["lib"]
+  defp elixirc_paths(_), do: ["lib"]
 
   # Dependencies can be Hex packages:
   #

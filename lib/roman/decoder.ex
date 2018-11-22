@@ -6,7 +6,7 @@ defmodule Roman.Decoder do
   @default_error {:error, {:invalid_numeral, "numeral is invalid"}}
   @valid_options [:explain, :ignore_case, :strict, :zero]
 
-  @type decoded_numeral :: {Roman.numeral, map}
+  @type decoded_numeral :: {Roman.numeral(), map}
 
   @doc """
   Decodes a roman numeral string into the corresponding integer value.
@@ -52,7 +52,7 @@ defmodule Roman.Decoder do
       {:error, {:repeated_vld,
       "letters V, L, and D can appear only once, but found several instances of L, V"}}
   """
-  @spec decode(String.t, keyword | map) :: {:ok, integer} | Roman.error
+  @spec decode(String.t(), keyword | map) :: {:ok, integer} | Roman.error()
   def decode(numeral, options \\ [])
 
   def decode(numeral, options) when is_binary(numeral) and is_list(options) do
@@ -63,7 +63,7 @@ defmodule Roman.Decoder do
 
     maybe_upcase = fn
       numeral, %{ignore_case: true} -> String.upcase(numeral)
-      numeral, _                    -> numeral
+      numeral, _ -> numeral
     end
 
     numeral
@@ -77,7 +77,7 @@ defmodule Roman.Decoder do
   def decode("N", %{zero: true}),
     do: {:ok, 0}
 
-  for {val, num} <- Roman.numeral_pairs do
+  for {val, num} <- Roman.numeral_pairs() do
     def decode(unquote(num), _), do: {:ok, unquote(val)}
   end
 
@@ -91,6 +91,7 @@ defmodule Roman.Decoder do
     case sequence(numeral, opts) do
       {:error, _} = error ->
         if explain, do: error, else: @default_error
+
       {:ok, seq} ->
         {:ok, Enum.reduce(seq, 0, fn {_, %{value: v}}, acc -> v + acc end)}
     end
@@ -111,23 +112,22 @@ defmodule Roman.Decoder do
     |> Map.merge(config)
   end
 
-  @spec sequence(Roman.numeral, map)
-      :: {:ok, [decoded_numeral]} | Roman.error
+  @spec sequence(Roman.numeral(), map) :: {:ok, [decoded_numeral]} | Roman.error()
   defp sequence(numeral, %{strict: strict}) do
-    with  {:ok, numeral} <- Numeral.validate(numeral, strict: strict),
-          {:ok, seq} <- decode_sections(numeral) do
+    with {:ok, numeral} <- Numeral.validate(numeral, strict: strict),
+         {:ok, seq} <- decode_sections(numeral) do
       if strict, do: Sequence.validate(seq), else: {:ok, seq}
     else
       {:error, _} = error -> error
     end
   end
 
-  @spec decode_sections(Roman.numeral) :: {:ok, [decoded_numeral]} | Roman.error
+  @spec decode_sections(Roman.numeral()) :: {:ok, [decoded_numeral]} | Roman.error()
   defp decode_sections(numeral) do
     sequence =
       numeral
       |> Stream.unfold(&decode_section/1)
-      |> Enum.to_list
+      |> Enum.to_list()
 
     {:ok, sequence}
   end
@@ -135,7 +135,7 @@ defmodule Roman.Decoder do
   # When decoding, we need to keep track of whether we've already encountered a
   # subtractive combination, and how much the subtraction was: this will be
   # necessary for further validation later
-  @spec decode_section(Roman.numeral) :: {decoded_numeral, Roman.numeral} | nil
+  @spec decode_section(Roman.numeral()) :: {decoded_numeral, Roman.numeral()} | nil
   defp decode_section("CM" <> rest),
     do: {{"CM", %{value: 900, delta: 100}}, rest}
 

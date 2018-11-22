@@ -5,17 +5,15 @@ defmodule Roman do
 
   @external_resource "lib/numerals.txt"
 
-  @numeral_pairs (
-    @external_resource
-    |> File.stream!
-    |> Stream.map(&String.split/1)
-    |> Stream.map(fn [val, num] -> {String.to_integer(val), num} end)
-    |> Enum.to_list
-  )
+  @numeral_pairs @external_resource
+                 |> File.stream!()
+                 |> Stream.map(&String.split/1)
+                 |> Stream.map(fn [val, num] -> {String.to_integer(val), num} end)
+                 |> Enum.to_list()
 
   @type error :: {:error, error_tuple}
-  @type error_tuple :: {atom, String.t}
-  @type numeral :: String.t
+  @type error_tuple :: {atom, String.t()}
+  @type numeral :: String.t()
 
   @doc false
   @spec numeral_pairs() :: [{integer, numeral}]
@@ -102,7 +100,7 @@ defmodule Roman do
       {:error, {:repeated_vld,
       "letters V, L, and D can appear only once, but found several instances of L, V"}}
   """
-  @spec decode(String.t, keyword) :: {:ok, integer} | Roman.error
+  @spec decode(String.t(), keyword) :: {:ok, integer} | Roman.error()
   defdelegate decode(numeral, options \\ []), to: __MODULE__.Decoder
 
   @doc """
@@ -111,11 +109,12 @@ defmodule Roman do
 
   If it succeeds in decoding the numeral, it returns corresponding value.
   """
-  @spec decode!(String.t, keyword) :: integer | no_return
+  @spec decode!(String.t(), keyword) :: integer | no_return
   def decode!(numeral, options \\ []) do
     case decode(numeral, options) do
       {:ok, val} ->
         val
+
       {:error, {_, message}} ->
         raise ArgumentError, message: message
     end
@@ -140,7 +139,7 @@ defmodule Roman do
       {:error, {:invalid_integer,
       "cannot encode values outside of range 1..3999"}}
   """
-  @spec encode(integer) :: {:ok, Roman.numeral} | Roman.error
+  @spec encode(integer) :: {:ok, Roman.numeral()} | Roman.error()
   defdelegate encode(integer), to: __MODULE__.Encoder
 
   @doc """
@@ -149,11 +148,12 @@ defmodule Roman do
 
   If it succeeds in encoding the numeral, it returns corresponding numeral.
   """
-  @spec encode!(integer) :: Roman.numeral | no_return
+  @spec encode!(integer) :: Roman.numeral() | no_return
   def encode!(int) do
     case encode(int) do
       {:ok, numeral} ->
         numeral
+
       {:error, {_, message}} ->
         raise ArgumentError, message: message
     end
@@ -176,7 +176,7 @@ defmodule Roman do
   iex> Roman.numeral?("x", ignore_case: true)
   true
   """
-  @spec numeral?(String.t, keyword) :: boolean
+  @spec numeral?(String.t(), keyword) :: boolean
   def numeral?(string, options \\ []) do
     case decode(string, options) do
       {:ok, _} -> true
