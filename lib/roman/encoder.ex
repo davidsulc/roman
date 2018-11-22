@@ -1,7 +1,7 @@
 defmodule Roman.Encoder do
   @moduledoc false
 
-  @spec encode(integer) :: Roman.numeral() | Roman.error()
+  @spec encode(integer) :: {:ok, Roman.numeral()} | Roman.error()
   for {val, num} <- Roman.numeral_pairs() do
     def encode(unquote(val)), do: {:ok, unquote(num)}
   end
