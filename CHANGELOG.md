@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.2.1
+
+    * improved docs
+    * fixed typing issue
+    * ran formatter
+
 ## 0.2.0
 
 ### Breaking changes
