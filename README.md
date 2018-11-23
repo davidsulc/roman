@@ -1,6 +1,7 @@
 # Roman
 
-A production-ready encoder/decoder for roman numerals, with detailed validation.
+A production-ready encoder/decoder for roman numerals, with detailed validation
+and awareness of composition rules.
 
 ## Installation
 
