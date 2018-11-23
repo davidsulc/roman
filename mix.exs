@@ -1,10 +1,12 @@
 defmodule Roman.Mixfile do
   use Mix.Project
 
+  @version "0.2.1"
+
   def project do
     [
       app: :roman,
-      version: "0.2.0",
+      version: @version,
       elixir: "~> 1.4",
       elixirc_paths: elixirc_paths(Mix.env()),
       build_embedded: Mix.env() == :prod,
