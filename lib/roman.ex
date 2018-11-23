@@ -1,6 +1,6 @@
 defmodule Roman do
   @moduledoc """
-  Functions to work with roman numerals in the 1..3999 range
+  Functions to work with roman numerals in the `1..3999` range
   """
 
   @external_resource "lib/numerals.txt"
@@ -36,7 +36,7 @@ defmodule Roman do
       of casing. If `false` (default), strings containing a lowercase letter
       will return an error.
     * `:strict` (boolean) - if `true` (default), strings not conforming to
-      composition rules will return an error. If `false` the numeral components
+      [composition rules](composition_rules.html) will return an error. If `false` the numeral components
       will be decomposed and added, and the result will be returned.
     * `:zero` - if `true`, the numeral N will be decoded as 0. This option has
       no influence on decoding other numerals.
@@ -44,7 +44,7 @@ defmodule Roman do
     Default values for options can be set in `config.exs`using the `:roman`
     application and the `:default_flags` key, for example:
 
-        config :roman, :default_flags, %{ignore_case: true}
+        `config :roman, :default_flags, %{ignore_case: true}`
 
     The values will remain overrideable on a per-call basis by passing the
     desired option value.
@@ -123,13 +123,13 @@ defmodule Roman do
   @doc """
   Encodes an integer into a roman numeral.
 
-  Only values in the 1..3999 range can be encoded.
+  Only values in the `1..3999` range can be encoded.
 
   This function returns:
 
   - `{:ok, numeral}` - the nuermal corresponding to the provided integer.
   - `{:error, {:invalid_integer, message}}` - the provided integer is not within
-      the acceptable 1..3999 range.
+      the acceptable `1..3999` range.
 
   ### Examples
 
@@ -162,10 +162,9 @@ defmodule Roman do
   @doc """
   Returns a boolean indicating whether the provided string is a valid numeral.
 
-  ## Options
-    * `:ignore_case` (boolean) - if `true`, strings will be evaluated while
-      ignoring casing. If `false` (default), strings containing a lowercase
-      letter will return `false`.
+  The return value indicates whether a call to `decode/2` would be successful.
+
+  Accepts the same options and returns the same error values as `decode/2`.
 
   ```
   iex> Roman.numeral?("VI")
@@ -175,6 +174,8 @@ defmodule Roman do
   iex> Roman.numeral?("x")
   false
   iex> Roman.numeral?("x", ignore_case: true)
+  true
+  iex> Roman.numeral?("VXL", strict: false)
   true
   ```
   """

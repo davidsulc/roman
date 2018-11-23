@@ -74,6 +74,7 @@ iex> Roman.decode("VXL", strict: false)
 ```
 
 Other libraries typically won't differentiate between VXL and XLV, considering both equally valid.
+Composition rules are documented [here](composition_rules.html).
 
 ## Author
 
