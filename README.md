@@ -4,36 +4,16 @@ A production-ready encoder/decoder for roman numerals, with detailed validation.
 
 ## Installation
 
-<!-- If [available in Hex](https://hex.pm/docs/publish) (**NOT YET THE CASE!**),
-the package can be installed
-by adding `roman` to your list of dependencies in `mix.exs`:
+The package can be installed by adding `roman` to your list of dependencies in `mix.exs`:
 
 ```elixir
 def deps do
-  [{:roman, "~> 0.1.0"}]
+  [{:roman, "~> 0.2"}]
 end
 ```
 
-Documentation can be generated with [ExDoc](https://github.com/elixir-lang/ex_doc)
-and published on [HexDocs](https://hexdocs.pm). Once published, the docs can
-be found at [https://hexdocs.pm/roman](https://hexdocs.pm/roman). -->
-
-This package isn't yet available in Hex, but can still be installed
-by adding `roman` to your list of dependencies in `mix.exs`:
-
-```elixir
-def deps do
-  [{:roman, github: "davidsulc/roman", tag: "0.2.0"}]
-end
-```
-
-Then, run `mix deps.get` to download and install.
-
-## Documentation
-
-Documentation can be generated locally with
-[ExDoc](https://github.com/elixir-lang/ex_doc) using the `mix docs` command.
-Once generated, the docs can be accessed by opening `doc/index.html`.
+The docs can be found online at
+[https://hexdocs.pm/roman](https://hexdocs.pm/roman).
 
 ## Basic Usage
 
