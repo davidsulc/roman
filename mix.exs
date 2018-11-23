@@ -10,6 +10,8 @@ defmodule Roman.Mixfile do
       build_embedded: Mix.env() == :prod,
       start_permanent: Mix.env() == :prod,
       deps: deps(),
+      description: description(),
+      package: package(),
       docs: docs()
     ]
   end
@@ -40,6 +42,20 @@ defmodule Roman.Mixfile do
       {:credo, "~> 1.0", only: [:dev, :test], runtime: false},
       {:dialyxir, "~> 0.5", only: [:dev], runtime: false},
       {:ex_doc, "~> 0.19", only: :dev, runtime: false}
+    ]
+  end
+
+  defp description() do
+    """
+    A roman numeral encoder/decoder that is aware of composition rules.
+    """
+  end
+
+  defp package() do
+    [
+      maintainers: ["David Sulc"],
+      licenses: ["MIT"],
+      links: %{"GitHub" => "https://github.com/davidsulc/roman"}
     ]
   end
 
